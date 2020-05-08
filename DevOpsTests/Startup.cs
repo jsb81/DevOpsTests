@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using DevOpsTests.Data;
+using DevOpsTests.Repository;
+using DevOpsTests.Models;
 
 namespace DevOpsTests
 {
@@ -26,6 +30,23 @@ namespace DevOpsTests
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddDbContext<DevOpsTestsContext>(options =>
+                    options.UseInMemoryDatabase("DevOpsTests"));
+
+            services.AddScoped(typeof(IDataRepository<Veichle>), typeof(DataRepository<Veichle>));
+
+            services.AddSwaggerDocument(config =>
+            {
+                config.PostProcess = document =>
+                {
+                    document.Info.Version = "v1.0";
+                    document.Info.Title = "DevOpsTests";
+                    document.Info.Description = "DevOpsTests";
+                    document.Info.TermsOfService = "None";
+                };
+            }
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +67,9 @@ namespace DevOpsTests
             {
                 endpoints.MapControllers();
             });
+
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
         }
     }
 }
