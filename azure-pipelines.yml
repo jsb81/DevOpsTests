@@ -34,10 +34,4 @@ steps:
   inputs:
     command: 'test'
     projects: '**/*Tests.csproj'
-    arguments: '--configuration $(buildConfiguration)'
-
-- script: dotnet test <test-project> --logger trx
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: 'VSTest'
-    testResultsFiles: '**/*.trx'
+    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
