@@ -14,6 +14,6 @@ namespace DevOpsTests.Data
         {
         }
 
-        public DbSet<DevOpsTests.Models.Veichle> Veichle { get; set; }
+        public DbSet<DevOpsTests.Models.Vehicle> Vehicle { get; set; }
     }
 }

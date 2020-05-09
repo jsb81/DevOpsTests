@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace DevOpsTests.Repository
 {
-    interface IDataRepository<T> where T: class
+    public interface IDataRepository<T> where T: class
     {
-        public List<T> GetAll();
+        public List<T> ToList();
     }
 }

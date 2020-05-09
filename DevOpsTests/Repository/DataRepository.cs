@@ -8,16 +8,16 @@ namespace DevOpsTests.Repository
 {
     public class DataRepository<T> : IDataRepository<T> where T : class
     {
-        private DevOpsTestsContext _context;
+        private readonly DevOpsTestsContext _context;
 
         public DataRepository(DevOpsTestsContext context)
         {
             _context = context;
         }
 
-        public List<T> GetAll()
+        public List<T> ToList()
         {
-            return this._context.Set<T>().ToList();
+            return this._context.Set<T>().ToList<T>();
         }
     }
 }

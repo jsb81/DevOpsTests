@@ -7,53 +7,58 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DevOpsTests.Data;
 using DevOpsTests.Models;
+using DevOpsTests.Repository;
 
 namespace DevOpsTests.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VeichlesController : ControllerBase
+    public class VehiclesController : ControllerBase
     {
         private readonly DevOpsTestsContext _context;
+        private readonly IDataRepository<Vehicle> _repository;
 
-        public VeichlesController(DevOpsTestsContext context)
+        public VehiclesController(
+            DevOpsTestsContext context, 
+            IDataRepository<Vehicle> repository)
         {
             _context = context;
+            _repository = repository;
         }
 
-        // GET: api/Veichles
+        // GET: api/Vehicles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Veichle>>> GetVeichle()
+        public ActionResult<IEnumerable<Vehicle>> GetVehicles()
         {
-            return await _context.Veichle.ToListAsync();
+            return Ok(_repository.ToList());
         }
 
-        // GET: api/Veichles/5
+        // GET: api/Vehicles/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Veichle>> GetVeichle(int id)
+        public async Task<ActionResult<Vehicle>> GetVehicle(int id)
         {
-            var veichle = await _context.Veichle.FindAsync(id);
+            var Vehicle = await _context.Vehicle.FindAsync(id);
 
-            if (veichle == null)
+            if (Vehicle == null)
             {
                 return NotFound();
             }
 
-            return veichle;
+            return Vehicle;
         }
 
-        // PUT: api/Veichles/5
+        // PUT: api/Vehicles/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutVeichle(int id, Veichle veichle)
+        public async Task<IActionResult> PutVehicle(int id, Vehicle Vehicle)
         {
-            if (id != veichle.Id)
+            if (id != Vehicle.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(veichle).State = EntityState.Modified;
+            _context.Entry(Vehicle).State = EntityState.Modified;
 
             try
             {
@@ -61,7 +66,7 @@ namespace DevOpsTests.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VeichleExists(id))
+                if (!VehicleExists(id))
                 {
                     return NotFound();
                 }
@@ -74,37 +79,37 @@ namespace DevOpsTests.Controllers
             return NoContent();
         }
 
-        // POST: api/Veichles
+        // POST: api/Vehicles
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Veichle>> PostVeichle(Veichle veichle)
+        public async Task<ActionResult<Vehicle>> PostVehicle(Vehicle Vehicle)
         {
-            _context.Veichle.Add(veichle);
+            _context.Vehicle.Add(Vehicle);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetVeichle", new { id = veichle.Id }, veichle);
+            return CreatedAtAction("GetVehicle", new { id = Vehicle.Id }, Vehicle);
         }
 
-        // DELETE: api/Veichles/5
+        // DELETE: api/Vehicles/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Veichle>> DeleteVeichle(int id)
+        public async Task<ActionResult<Vehicle>> DeleteVehicle(int id)
         {
-            var veichle = await _context.Veichle.FindAsync(id);
-            if (veichle == null)
+            var Vehicle = await _context.Vehicle.FindAsync(id);
+            if (Vehicle == null)
             {
                 return NotFound();
             }
 
-            _context.Veichle.Remove(veichle);
+            _context.Vehicle.Remove(Vehicle);
             await _context.SaveChangesAsync();
 
-            return veichle;
+            return Vehicle;
         }
 
-        private bool VeichleExists(int id)
+        private bool VehicleExists(int id)
         {
-            return _context.Veichle.Any(e => e.Id == id);
+            return _context.Vehicle.Any(e => e.Id == id);
         }
     }
 }

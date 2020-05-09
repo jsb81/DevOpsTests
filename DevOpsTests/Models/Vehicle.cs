@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DevOpsTests.Models
 {
-    public class Veichle
+    public class Vehicle
     {
         [Key]
         public int Id { get; set; }

@@ -34,7 +34,7 @@ namespace DevOpsTests
             services.AddDbContext<DevOpsTestsContext>(options =>
                     options.UseInMemoryDatabase("DevOpsTests"));
 
-            services.AddScoped(typeof(IDataRepository<Veichle>), typeof(DataRepository<Veichle>));
+            services.AddScoped(typeof(IDataRepository<Vehicle>), typeof(DataRepository<Vehicle>));
 
             services.AddSwaggerDocument(config =>
             {
