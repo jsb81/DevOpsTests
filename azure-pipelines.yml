@@ -22,7 +22,7 @@ steps:
     command: 'restore'
     projects: '**/*.csproj'
     feedsToUse: 'select'
-    
+
 - task: DotNetCoreCLI@2
   displayName: Build Projects
   inputs:
@@ -34,9 +34,9 @@ steps:
   inputs:
     command: 'test'
     projects: '**/*Tests.csproj'
-    arguments: '-l trx'
-    testRunTitle: 'Tests'
+    arguments: '--configuration $(buildConfiguration)'
 
+- script: dotnet test '**/*Tests.csproj' --logger trx
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'VSTest'
