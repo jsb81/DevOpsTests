@@ -8,5 +8,7 @@ namespace DevOpsTests.Repository
     public interface IDataRepository<T> where T: class
     {
         public List<T> ToList();
+
+        public Task<T> FindAsync(int id);
     }
 }

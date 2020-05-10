@@ -10,38 +10,21 @@ using System.Text;
 using Xunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace TestDevOpsTests
 {
     public class VehiclesControllerTests
     {
-        [Fact(DisplayName ="GetVeichles with two Vehicles Returns two Vehicles")]
-        public void GetVehicles_WithTwoVehicles_ReturnsTwoVehicles()
+        private List<Vehicle> vehicles;
+
+        public VehiclesControllerTests()
         {
-            // Arrange
-            var mockRepository = new Mock<IDataRepository<Vehicle>>();
-            mockRepository.Setup(repository => repository.ToList())
-                .Returns(GetTestVehicles());
-            var controller = new VehiclesController(null, mockRepository.Object);
+            vehicles = new List<Vehicle>();
 
-            // Act
-            var response = controller.GetVehicles();
-
-            // Assert
-            response.Result.Should().BeOfType<OkObjectResult>();
-            var okResult = response.Result as OkObjectResult;
-            okResult.Value.Should().BeOfType<List<Vehicle>>();
-            var vehicles = okResult.Value as List<Vehicle>;
-            vehicles.Count.Should().Be(2);
-        }
-
-        #region Mocked Contents Methods
-        List<Vehicle> GetTestVehicles()
-        {
-            var vehicles = new List<Vehicle>();
-
-            vehicles.Add(new Vehicle() 
-            { 
+            vehicles.Add(new Vehicle()
+            {
                 Id = 1,
                 Model = "Ferrari",
                 SerialNumber = "F01",
@@ -57,9 +40,58 @@ namespace TestDevOpsTests
                 Number = 2,
                 Wheels = 2
             });
-
-            return vehicles;
         }
-        #endregion
+
+        [Fact(DisplayName ="GetVeichles with two Vehicles Returns two Vehicles")]
+        public void GetVehicles_WithTwoVehicles_ReturnsTwoVehicles()
+        {
+            // Arrange
+            var mockRepository = new Mock<IDataRepository<Vehicle>>();
+            mockRepository.Setup(repository => repository.ToList())
+                .Returns(() => { return this.vehicles; });
+            var controller = new VehiclesController(null, mockRepository.Object);   
+
+            // Act
+            var response = controller.GetVehicles();
+
+            // Assert
+            response.Result.Should().BeOfType<OkObjectResult>();
+            var okResult = response.Result as OkObjectResult;
+            okResult.Value.Should().BeOfType<List<Vehicle>>();
+            var vehicles = okResult.Value as List<Vehicle>;
+            vehicles.Count.Should().Be(2);
+        }
+
+        [Fact(DisplayName = "GetVehicle with matching result returns one Vehicle")]
+        public async Task GetVehicle_WithMatchingResult_ReturnsOneVehicle()
+        {
+            // Arrange
+            var mockRepository = new Mock<IDataRepository<Vehicle>>();
+            mockRepository.Setup(repository => repository.FindAsync(It.IsAny<int>()))
+                .Returns<int>((id) => searchVehicle(id));
+
+            var controller = new VehiclesController(null, mockRepository.Object);
+
+            // Act
+            var response = await controller.GetVehicle(1);
+
+            // Assert
+            response.Result.Should().BeOfType<OkObjectResult>();
+            var okResult = response.Result as OkObjectResult;
+            okResult.Value.Should().BeOfType<Vehicle>();
+            var vehicle = okResult.Value as Vehicle;
+            vehicle.Model.Should().Be("Ferrari");
+        }
+
+        private async Task<Vehicle> searchVehicle(int id)
+        {
+            Task<Vehicle> task = Task.Factory.StartNew(() =>
+            {
+                return vehicles.SingleOrDefault(vehicle => vehicle.Id == id);
+            });
+
+            return await task;
+        }
+
     }
 }

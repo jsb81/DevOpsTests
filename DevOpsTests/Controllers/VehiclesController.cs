@@ -28,6 +28,7 @@ namespace DevOpsTests.Controllers
 
         // GET: api/Vehicles
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<Vehicle>> GetVehicles()
         {
             return Ok(_repository.ToList());
@@ -35,16 +36,18 @@ namespace DevOpsTests.Controllers
 
         // GET: api/Vehicles/5
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Vehicle>> GetVehicle(int id)
         {
-            var Vehicle = await _context.Vehicle.FindAsync(id);
+            var Vehicle = await _repository.FindAsync(id);
 
             if (Vehicle == null)
             {
                 return NotFound();
             }
 
-            return Vehicle;
+            return Ok(Vehicle);
         }
 
         // PUT: api/Vehicles/5

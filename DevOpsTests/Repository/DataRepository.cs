@@ -19,5 +19,10 @@ namespace DevOpsTests.Repository
         {
             return this._context.Set<T>().ToList<T>();
         }
+
+        public async Task<T> FindAsync(int id)
+        {
+            return await this._context.Set<T>().FindAsync(id);
+        }
     }
 }
